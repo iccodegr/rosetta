@@ -1,0 +1,12 @@
+[submodule "rosetta/lib/unoconv"]
+	path = rosetta/lib/unoconv
+	url = git@github.com:dagwieers/unoconv.git
+[submodule "rosetta/lib/flask"]
+	path = rosetta/lib/flask
+	url = git@github.com:mitsuhiko/flask.git
+[submodule "rosetta/lib/werkzeug"]
+	path = rosetta/lib/werkzeug
+	url = git@github.com:mitsuhiko/werkzeug.git
+[submodule "rosetta/lib/itsdangerous"]
+	path = rosetta/lib/itsdangerous
+	url = git@github.com:mitsuhiko/itsdangerous
