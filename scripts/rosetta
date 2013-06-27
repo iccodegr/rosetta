@@ -3,12 +3,14 @@ from argparse import ArgumentParser
 from subprocess import Popen
 import logging
 import sys
+
 sys.path.append('.')
 import atexit
 from time import sleep
 
 logging.basicConfig(level=logging.DEBUG)
 log = logging.getLogger()
+
 
 def at_exit(procs):
     log.info("Stopping...")
@@ -22,13 +24,9 @@ def at_exit(procs):
 
 
 def start_all(**kw):
-    from os.path import join, dirname
     log.info("Starting unoconv")
-    from rosetta import lib as ros_lib
-    print ros_lib.__file__
-    unoconv_exec = join(dirname(ros_lib.__file__),'unoconv','unoconv')
 
-    unoconv = Popen([unoconv_exec, '-l'])
+    unoconv = Popen([sys.argv[0], 'ooffice'])
     webapi = Popen([sys.argv[0], 'webapi'])
 
     procs = [unoconv, webapi]
@@ -41,13 +39,18 @@ def start_all(**kw):
         log.info("Stopping...")
 
 
-
 def start_webapi(port):
     log.info("Starting webapi")
     from rosetta import webapi
+
+    webapi.app.debug = True
     webapi.app.run(port=port)
 
 
+def start_ooffice(port):
+    from rosetta.converters.ooffice import start_listener
+
+    start_listener(port)
 
 ##
 # Argument parser
@@ -62,8 +65,11 @@ webapi_p = subpar.add_parser('webapi')
 webapi_p.add_argument('--port', type=int, default=5050)
 webapi_p.set_defaults(func=start_webapi)
 
-if __name__=='__main__':
-    print sys.argv[0]
+oofice_p = subpar.add_parser('ooffice')
+oofice_p.add_argument('--port', type=int, default=21000)
+oofice_p.set_defaults(func=start_ooffice)
+
+if __name__ == '__main__':
     args = parser.parse_args()
     args = vars(args)
     func = args.pop('func')
