@@ -15,8 +15,7 @@ def realpath(*args):
 
 def set_office_environ(office):
     ### Set PATH so that crash_report is found
-    os.environ['PATH'] = realpath(office.basepath, 'program') + os.pathsep +
-                         os.environ['PATH']
+    os.environ['PATH'] = realpath(office.basepath, 'program') + os.pathsep + os.environ['PATH']
 
     ### Set UNO_PATH so that "officehelper.bootstrap()" can find soffice executable:
     os.environ['UNO_PATH'] = office.unopath
