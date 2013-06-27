@@ -1,0 +1,76 @@
+#!/usr/bin/env python
+from argparse import ArgumentParser
+from subprocess import Popen
+import logging
+import sys
+
+sys.path.append('.')
+import atexit
+from time import sleep
+
+logging.basicConfig(level=logging.DEBUG)
+log = logging.getLogger()
+
+
+def at_exit(procs):
+    log.info("Stopping...")
+    for p in procs:
+        try:
+            log.info("Stoping %d", p.pid)
+            p.terminate()
+            p.wait()
+        except:
+            log.error("Couldn't stop")
+
+
+def start_all(**kw):
+    log.info("Starting unoconv")
+
+    unoconv = Popen([sys.argv[0], 'ooffice'])
+    webapi = Popen([sys.argv[0], 'webapi'])
+
+    procs = [unoconv, webapi]
+    atexit.register(at_exit, procs)
+
+    try:
+        while True:
+            sleep(10)
+    except KeyboardInterrupt:
+        log.info("Stopping...")
+
+
+def start_webapi(port):
+    log.info("Starting webapi")
+    from rosetta import webapi
+
+    webapi.app.debug = True
+    webapi.app.run(port=port)
+
+
+def start_ooffice(port):
+    from rosetta.converters.ooffice import start_listener
+
+    start_listener(port)
+
+##
+# Argument parser
+##
+parser = ArgumentParser(description='Rosetta CLI')
+subpar = parser.add_subparsers()
+
+run_all_p = subpar.add_parser('start')
+run_all_p.set_defaults(func=start_all)
+
+webapi_p = subpar.add_parser('webapi')
+webapi_p.add_argument('--port', type=int, default=5050)
+webapi_p.set_defaults(func=start_webapi)
+
+oofice_p = subpar.add_parser('ooffice')
+oofice_p.add_argument('--port', type=int, default=21000)
+oofice_p.set_defaults(func=start_ooffice)
+
+if __name__ == '__main__':
+    args = parser.parse_args()
+    args = vars(args)
+    func = args.pop('func')
+    func(**args)

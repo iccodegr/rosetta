@@ -1,0 +1,18 @@
+
+include rosetta/lib/unoconv/unoconv
+recursive-include rosetta/lib/flask/flask *
+recursive-include rosetta/lib/werkzeug/werkzeug *
+recursive-include rosetta/lib/itsdangerous *
+
+recursive-exclude rosetta *.pyc
+recursive-exclude rosetta *.pyo
+recursive-exclude rosetta *.git*
+recursive-exclude rosetta *.travis*
+
+prune rosetta/lib/itsdangerous/docs
+prune rosetta/lib/unoconv/doc
+prune rosetta/lib/unoconv/tests
+prune rosetta/lib/flask/flask/testsuite
+prune rosetta/lib/werkzeug/werkzeug/testsuite
+
+
